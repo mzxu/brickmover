@@ -28,7 +28,7 @@ public class Client {
 	 
 				public void accept(String t) {
 					System.out.println("received No." + count.getAndAdd(1) + "->" + t);
-					connection.send("request block");
+					connection.send("request block" + count.get());
 					if (t==null) {
 						client.close();
 						latch.countDown();
