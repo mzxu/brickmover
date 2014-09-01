@@ -93,7 +93,7 @@ public class TestServer {
 		// server
 		TcpServer<String, String> server = new TcpServerSpec<String, String>(NettyTcpServer.class)
 				.env(env)
-				.dispatcher(Environment.RING_BUFFER)
+				.dispatcher(Environment.WORK_QUEUE)
 				.listen("localhost", 15151)
 				.codec(StandardCodecs.STRING_CODEC)
 				.consume(serverConsumer).get();
