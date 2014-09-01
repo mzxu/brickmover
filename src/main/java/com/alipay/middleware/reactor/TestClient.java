@@ -23,7 +23,6 @@ public class TestClient {
 	public TestClient(Environment env) throws Exception {
 		TcpClient<String, String> client = new TcpClientSpec<String, String>(NettyTcpClient.class)
 				.env(env)
-				.dispatcher(Environment.WORK_QUEUE)
 				.codec(StandardCodecs.STRING_CODEC)
 				.connect("localhost", 15151)
 				.get();

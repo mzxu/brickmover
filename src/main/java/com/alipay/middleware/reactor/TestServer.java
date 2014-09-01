@@ -10,7 +10,10 @@ import reactor.tcp.TcpConnection;
 import reactor.tcp.TcpServer;
 import reactor.tcp.netty.NettyTcpServer;
 import reactor.tcp.spec.TcpServerSpec;
+import reactor.util.StringUtils;
  
+import io.netty.util.internal.StringUtil;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -41,13 +44,28 @@ public class TestServer {
 						System.out.println("Received data from client No. "+count.getAndAdd(1)+" -> " + data);
 						try {
 							String line = br.readLine();
-							
-							connection.send(line);
+							if (StringUtils.isEmpty(line)) {
+								System.out.println("Empty line found!");
+								line = line + "empty line!";
+							}
+							connection.send(line).onSuccess(new Consumer<Void>() {
+								 
+								public void accept(Void data) {
+//									latch.countDown();
+								}
+
+							}).onError(new Consumer<Throwable>() {
+
+								public void accept(Throwable t) {
+									t.printStackTrace();
+								}
+							});		;
 							if (line == null) {
 								latch.countDown();
 								System.out.println("all lines are read!");
 								
 							}
+							System.out.println("Sent -> " + line);
 
 						}
 						catch (IOException e) {
@@ -96,7 +114,6 @@ public class TestServer {
 		// server
 		TcpServer<String, String> server = new TcpServerSpec<String, String>(NettyTcpServer.class)
 				.env(env)
-				.dispatcher(Environment.WORK_QUEUE)
 				.listen("localhost", 15151)
 				.codec(StandardCodecs.STRING_CODEC)
 				.consume(serverConsumer).get();
