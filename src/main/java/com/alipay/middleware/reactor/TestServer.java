@@ -17,6 +17,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicInteger;
  
 /**
  * @author Stephane Maldini
@@ -27,8 +28,9 @@ public class TestServer {
  
 	private final TcpServer<String, String> server;
 	private final CountDownLatch latch = new CountDownLatch(1);
+	private AtomicInteger count = new AtomicInteger(0);
+
 	public TestServer(Environment env,  final BufferedReader br) throws Exception {
- 
 		Consumer<TcpConnection<String, String>> serverConsumer = new Consumer<TcpConnection<String, String>>() {
  
 			public void accept(final TcpConnection<String, String> connection) {
@@ -36,9 +38,10 @@ public class TestServer {
 				connection.consume(new Consumer<String>() {
  
 					public void accept(String data) {
-						System.out.println("Received data from client -> " + data);
+						System.out.println("Received data from client No. "+count.getAndAdd(1)+" -> " + data);
 						try {
 							String line = br.readLine();
+							
 							connection.send(line);
 							if (line == null) {
 								latch.countDown();

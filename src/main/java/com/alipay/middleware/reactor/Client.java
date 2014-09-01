@@ -9,11 +9,13 @@ import reactor.tcp.TcpServer;
  
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Client {
 	 
 	final private static Environment environment = new Environment();
 	private final static CountDownLatch latch = new CountDownLatch(1);
+	private static AtomicInteger count = new AtomicInteger(0);
 	 
 	public static void simpleRequestReplyWithNettyTcp() throws Exception {
 		final TcpClient client = new TestClient(environment).client();;
@@ -25,7 +27,7 @@ public class Client {
 			connection.consume(new Consumer<String>() {
 	 
 				public void accept(String t) {
-					System.out.println("received: " + t);
+					System.out.println("received No." + count.getAndAdd(1) + "->" + t);
 					connection.send("request block");
 					if (t==null) {
 						client.close();
