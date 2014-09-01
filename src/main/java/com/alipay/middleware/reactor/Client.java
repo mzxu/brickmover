@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 public class Client {
 	 
 	final private static Environment environment = new Environment();
+	private final static CountDownLatch latch = new CountDownLatch(1);
 	 
 	public static void simpleRequestReplyWithNettyTcp() throws Exception {
 		final TcpClient client = new TestClient(environment).client();;
@@ -28,11 +29,12 @@ public class Client {
 					connection.send("request block");
 					if (t==null) {
 						client.close();
+						latch.countDown();
 					}
 				}
 			});
 			connection.send("client is ready");
-
+			latch.await();
 //			connection.send("request block").onSuccess(new Consumer<Void>() {
 //	 
 //				public void accept(Void data) {
@@ -45,7 +47,6 @@ public class Client {
 //					t.printStackTrace();
 //				}
 //			});
-			Thread.sleep(5000);
  
 		} finally {
 			if(client != null){
@@ -53,6 +54,11 @@ public class Client {
 			}
 		}
 	}
+	
+	public CountDownLatch latch() {
+		return latch;
+	}
+	
 	public static void main(String[] arge) throws Exception {
 		simpleRequestReplyWithNettyTcp();
 	}

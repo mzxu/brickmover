@@ -16,7 +16,8 @@ import reactor.tcp.netty.NettyTcpClient;
 
 public class TestClient {
 
- 
+	private final static CountDownLatch latch = new CountDownLatch(1);
+
 	private final TcpClient<String, String> client;
  
 	public TestClient(Environment env) throws Exception {
