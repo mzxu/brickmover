@@ -17,6 +17,7 @@ public class Client {
 	public static void simpleRequestReplyWithNettyTcp() throws Exception {
 		final TcpClient client = new TestClient(environment).client();;
 		try{
+			System.out.println("client started: ");
 
 			final TcpConnection<String, String> connection = (TcpConnection<String, String>) client.open().await();
 			 

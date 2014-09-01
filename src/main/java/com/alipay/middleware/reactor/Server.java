@@ -14,6 +14,7 @@ public class Server {
 	final private static Environment environment = new Environment();
  
 	public static void simpleRequestReplyWithNettyTcp() throws Exception {
+		System.out.println("server started: ");
 		BufferedReader br = new BufferedReader(new FileReader("sample.txt"));
 		
 		TcpServer server = null;

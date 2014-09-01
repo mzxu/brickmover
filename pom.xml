@@ -40,13 +40,28 @@
                          <configuration>  
                              <transformers>  
                                  <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                 <mainClass>com.alipay.middleware.reactor.ClientServerTests</mainClass>  
+                                 <mainClass>com.alipay.middleware.reactor.Server</mainClass>  
                                  </transformer>  
                              </transformers>  
                          </configuration>  
                      </execution>  
                  </executions>  
              </plugin>  
+    <plugin>
+      <!-- Build an executable JAR -->
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-jar-plugin</artifactId>
+      <version>2.4</version>
+      <configuration>
+        <archive>
+          <manifest>
+            <addClasspath>true</addClasspath>
+            <classpathPrefix>lib/</classpathPrefix>
+            <mainClass>com.alipay.middleware.reactor.Server</mainClass>
+          </manifest>
+        </archive>
+      </configuration>
+    </plugin>
         </plugins>  
 </build>
   <dependencies>
