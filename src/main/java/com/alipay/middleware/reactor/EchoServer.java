@@ -18,6 +18,7 @@ package com.alipay.middleware.reactor;
 
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.util.concurrent.ArrayBlockingQueue;
 
 import io.netty.bootstrap.ServerBootstrap;
@@ -94,7 +95,7 @@ public final class EchoServer {
              });
 
             // Start the server.
-            ChannelFuture f = b.bind(port).sync();
+            ChannelFuture f = b.bind(new InetSocketAddress(port)).sync();
 
             // Wait until the server socket is closed.
             f.channel().closeFuture().sync();
