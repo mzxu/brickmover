@@ -79,8 +79,6 @@ public final class EchoServer {
             b.group(BossEventLoopGroup, WorkerEventLoopGroup)
                 .channel(EpollServerSocketChannel.class)
                 .childOption(ChannelOption.TCP_NODELAY, true)
-                .childOption(ChannelOption.SO_KEEPALIVE, true)
-                .childOption(ChannelOption.SO_REUSEADDR, true)
                 .childOption(ChannelOption.ALLOCATOR, new PooledByteBufAllocator(false))
                 .childOption(ChannelOption.SO_RCVBUF, 1048576)
                 .childOption(ChannelOption.SO_SNDBUF, 1048576)
