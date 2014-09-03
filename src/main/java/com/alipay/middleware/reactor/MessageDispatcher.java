@@ -27,7 +27,7 @@ public class MessageDispatcher {
           return new Event<Buffer>(new Buffer());
         }
       })
-      .consume(new EchoConsumer())
+      .consume(new Node("127.0.0.1", environment))
       .get();
  
   }

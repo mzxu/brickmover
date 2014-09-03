@@ -114,7 +114,7 @@ public class TestServer {
 		// server
 		TcpServer<String, String> server = new TcpServerSpec<String, String>(NettyTcpServer.class)
 				.env(env)
-				.listen("localhost", 15151)
+				.listen("localhost", 8007)
 				.codec(StandardCodecs.STRING_CODEC)
 				.consume(serverConsumer).get();
  
