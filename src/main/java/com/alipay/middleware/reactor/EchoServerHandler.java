@@ -70,7 +70,8 @@ public class EchoServerHandler extends ChannelInboundHandlerAdapter  {
 			}
         } 
         finally {
-            //ctx.write(Unpooled.wrappedBuffer("msg received".getBytes()));
+            in.release();
+            
         } 
     }
 	
@@ -127,6 +128,7 @@ public class EchoServerHandler extends ChannelInboundHandlerAdapter  {
             out.writeBytes(b, 0, idx);
             out.writeBytes(b, idx2, b.length - idx2);
             ctx.writeAndFlush(out);
+            out.release();
 
 
         } else {
@@ -134,6 +136,8 @@ public class EchoServerHandler extends ChannelInboundHandlerAdapter  {
         	out.writeInt(-1);
         	ctx.writeAndFlush(out);
         	ctx.close();
+            out.release();
+
         }
     }
 }
