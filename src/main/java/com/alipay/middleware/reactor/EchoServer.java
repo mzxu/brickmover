@@ -21,11 +21,13 @@ import java.io.IOException;
 import java.util.concurrent.ArrayBlockingQueue;
 
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
+import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -68,22 +70,26 @@ public final class EchoServer {
             e.printStackTrace();
         }
         // Configure the server.
-        EventLoopGroup bossGroup = new NioEventLoopGroup(numOfBossThreads);
-        EventLoopGroup workerGroup = new NioEventLoopGroup(numOfWorkerThreads);
-        try {
+        EpollEventLoopGroup BossEventLoopGroup=new EpollEventLoopGroup(numOfBossThreads, new PriorityThreadFactory("@+监听连接线程",Thread.NORM_PRIORITY)); //mainReactor    1个线程
+        EpollEventLoopGroup WorkerEventLoopGroup=new EpollEventLoopGroup(numOfWorkerThreads, new PriorityThreadFactory("@+I/O线程",Thread.NORM_PRIORITY));   //subReactor       线程数量等价于cpu个数+1
+         try {
             ServerBootstrap b = new ServerBootstrap();
-            b.group(bossGroup, workerGroup)
-             .channel(NioServerSocketChannel.class)
-             .option(ChannelOption.SO_BACKLOG, 100)
-             .option(ChannelOption.TCP_NODELAY, true)
-             .handler(new LoggingHandler(LogLevel.INFO))
-             .childHandler(new ChannelInitializer<SocketChannel>() {
+            b.group(BossEventLoopGroup, WorkerEventLoopGroup)
+                .channel(NioServerSocketChannel.class)
+                .childOption(ChannelOption.TCP_NODELAY, true)
+                .childOption(ChannelOption.SO_KEEPALIVE, true)
+                .childOption(ChannelOption.SO_REUSEADDR, true)     //重用地址
+                .childOption(ChannelOption.ALLOCATOR, new PooledByteBufAllocator(false))// heap buf 's better
+                .childOption(ChannelOption.SO_RCVBUF, 1048576)
+                .childOption(ChannelOption.SO_SNDBUF, 1048576)
+                    .childHandler(new ChannelInitializer<SocketChannel>() {
                  @Override
                  public void initChannel(SocketChannel ch) throws Exception {
                      ChannelPipeline p = ch.pipeline();
 
                      //p.addLast(new LoggingHandler(LogLevel.INFO));
-                     p.addLast(new EchoServerHandler(q, producerThread));
+                     p.addLast(null, new EchoServerHandler(q, producerThread));
+                     
                  }
              });
 
@@ -94,8 +100,8 @@ public final class EchoServer {
             f.channel().closeFuture().sync();
         } finally {
             // Shut down all event loops to terminate all threads.
-            bossGroup.shutdownGracefully();
-            workerGroup.shutdownGracefully();
+        	BossEventLoopGroup.shutdownGracefully();
+        	WorkerEventLoopGroup.shutdownGracefully();
         }
     }
 

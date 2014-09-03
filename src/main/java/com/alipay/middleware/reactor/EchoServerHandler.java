@@ -32,7 +32,7 @@ import io.netty.util.ReferenceCountUtil;
  * Handler implementation for the echo server.
  */
 @Sharable
-public class EchoServerHandler extends ChannelInboundHandlerAdapter  {
+public class EchoServerHandler extends ChannelInboundHandlerAdapter    {
 
 	    protected final ArrayBlockingQueue<Pair<Long, String>> q;
 	    protected Thread producerThread;
