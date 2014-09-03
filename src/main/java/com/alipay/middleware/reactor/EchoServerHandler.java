@@ -56,6 +56,7 @@ public class EchoServerHandler extends ChannelInboundHandlerAdapter  {
 				record = q.poll();
 				while (record == null) {
 				    if (producerThread.isAlive()) {
+				    	System.out.println("block happened!");
 				        //Thread.sleep(30);
 				        record = q.poll();
 				    } else {
