@@ -72,13 +72,18 @@ public final class EchoServer {
             e.printStackTrace();
         }
         // Configure the server.
-        EpollEventLoopGroup BossEventLoopGroup=new EpollEventLoopGroup(numOfBossThreads);
-        EpollEventLoopGroup WorkerEventLoopGroup=new EpollEventLoopGroup(numOfWorkerThreads);
+        EpollEventLoopGroup BossEventLoopGroup=new EpollEventLoopGroup(numOfBossThreads, new PriorityThreadFactory("@+listener",Thread.NORM_PRIORITY));
+        EpollEventLoopGroup WorkerEventLoopGroup=new EpollEventLoopGroup(numOfWorkerThreads, new PriorityThreadFactory("@+I/O",Thread.NORM_PRIORITY));
          try {
             ServerBootstrap b = new ServerBootstrap();
             b.group(BossEventLoopGroup, WorkerEventLoopGroup)
                 .channel(EpollServerSocketChannel.class)
                 .childOption(ChannelOption.TCP_NODELAY, true)
+                .childOption(ChannelOption.SO_KEEPALIVE, true)
+                .childOption(ChannelOption.SO_REUSEADDR, true)
+                .childOption(ChannelOption.ALLOCATOR, new PooledByteBufAllocator(false))
+                .childOption(ChannelOption.SO_RCVBUF, 1048576)
+                .childOption(ChannelOption.SO_SNDBUF, 1048576)
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                  @Override
                  public void initChannel(SocketChannel ch) throws Exception {
