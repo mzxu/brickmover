@@ -72,8 +72,8 @@ public final class EchoServer {
             e.printStackTrace();
         }
         // Configure the server.
-        EpollEventLoopGroup BossEventLoopGroup=new EpollEventLoopGroup(numOfBossThreads, new PriorityThreadFactory("@+listener",Thread.NORM_PRIORITY));
-        EpollEventLoopGroup WorkerEventLoopGroup=new EpollEventLoopGroup(numOfWorkerThreads, new PriorityThreadFactory("@+I/O",Thread.NORM_PRIORITY));
+        EpollEventLoopGroup BossEventLoopGroup=new EpollEventLoopGroup(numOfBossThreads);
+        EpollEventLoopGroup WorkerEventLoopGroup=new EpollEventLoopGroup(numOfWorkerThreads);
          try {
             ServerBootstrap b = new ServerBootstrap();
             b.group(BossEventLoopGroup, WorkerEventLoopGroup)
