@@ -70,16 +70,16 @@ public final class EchoServer {
             e.printStackTrace();
         }
         // Configure the server.
-        EpollEventLoopGroup BossEventLoopGroup=new EpollEventLoopGroup(numOfBossThreads, new PriorityThreadFactory("@+监听连接线程",Thread.NORM_PRIORITY)); //mainReactor    1个线程
-        EpollEventLoopGroup WorkerEventLoopGroup=new EpollEventLoopGroup(numOfWorkerThreads, new PriorityThreadFactory("@+I/O线程",Thread.NORM_PRIORITY));   //subReactor       线程数量等价于cpu个数+1
+        EpollEventLoopGroup BossEventLoopGroup=new EpollEventLoopGroup(numOfBossThreads, new PriorityThreadFactory("@+listener",Thread.NORM_PRIORITY));
+        EpollEventLoopGroup WorkerEventLoopGroup=new EpollEventLoopGroup(numOfWorkerThreads, new PriorityThreadFactory("@+I/O",Thread.NORM_PRIORITY));
          try {
             ServerBootstrap b = new ServerBootstrap();
             b.group(BossEventLoopGroup, WorkerEventLoopGroup)
                 .channel(NioServerSocketChannel.class)
                 .childOption(ChannelOption.TCP_NODELAY, true)
                 .childOption(ChannelOption.SO_KEEPALIVE, true)
-                .childOption(ChannelOption.SO_REUSEADDR, true)     //重用地址
-                .childOption(ChannelOption.ALLOCATOR, new PooledByteBufAllocator(false))// heap buf 's better
+                .childOption(ChannelOption.SO_REUSEADDR, true)
+                .childOption(ChannelOption.ALLOCATOR, new PooledByteBufAllocator(false))
                 .childOption(ChannelOption.SO_RCVBUF, 1048576)
                 .childOption(ChannelOption.SO_SNDBUF, 1048576)
                     .childHandler(new ChannelInitializer<SocketChannel>() {
@@ -88,7 +88,7 @@ public final class EchoServer {
                      ChannelPipeline p = ch.pipeline();
 
                      //p.addLast(new LoggingHandler(LogLevel.INFO));
-                     p.addLast(null, new EchoServerHandler(q, producerThread));
+                     p.addLast(new EchoServerHandler(q, producerThread));
                      
                  }
              });

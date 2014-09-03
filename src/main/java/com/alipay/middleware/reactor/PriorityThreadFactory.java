@@ -12,8 +12,8 @@ public class PriorityThreadFactory implements ThreadFactory {
  
     /**
      *
-     * @param name 线程池名
-     * @param priority   线程池优先级
+     * @param name 
+     * @param priority   
      */
     public PriorityThreadFactory(String name, int priority){
         _prio = priority;
